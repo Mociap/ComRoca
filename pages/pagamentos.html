@@ -403,7 +403,7 @@
 
                 // Atualizar participante com informações de pagamento
                 console.log("Atualizando status do participante para 'pago'...");
-                db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                     .update({
                         statusPagamento: 'pago',
                         formaPagamento: formaPagamento,
@@ -415,7 +415,7 @@
                         console.log("Registrando pagamento na coleção de pagamentos...");
                         
                         // Registrar pagamento na coleção de pagamentos
-                        return db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos").add({
+                        return db.collection("Eventos").doc("ComRoca2025").collection("pagamentos").add({
                             participanteId: participanteId,
                             participanteNome: $('#participante option:selected').text(),
                             valor: valorPagamento,
@@ -447,14 +447,14 @@
                 const participanteId = $(this).data('participante');
 
                 // Atualizar status do pagamento
-                db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos").doc(pagamentoId)
+                db.collection("Eventos").doc("ComRoca2025").collection("pagamentos").doc(pagamentoId)
                     .update({
                         status: 'estornado',
                         dataEstorno: new Date().toISOString()
                     })
                     .then(() => {
                         // Atualizar status do participante
-                        return db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+                        return db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                             .update({
                                 statusPagamento: 'pendente',
                                 dataPagamento: null,
@@ -480,7 +480,7 @@
 
         function carregarDashboard() {
             // Primeiro, vamos buscar os pagamentos confirmados
-            db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos")
+            db.collection("Eventos").doc("ComRoca2025").collection("pagamentos")
                 .where("status", "==", "confirmado")
                 .get()
                 .then((pagamentosSnapshot) => {
@@ -500,14 +500,14 @@
                     $('#valorPago').text(valorTotalPago.toFixed(2).replace('.', ','));
             
                     // Agora vamos buscar os dados de inscrições para os outros cards
-                    return db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+                    return db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                         .where("anoevento", "==", "2025")
                         .get();
                 })
                 .then((querySnapshot) => {
                     let totalInscritos = querySnapshot.size;
                     let totalPendentes = 0;
-                    const valorInscricao = 20.00;
+                    const valorInscricao = 30.00;
             
                     querySnapshot.forEach((doc) => {
                         const participante = doc.data();
@@ -541,7 +541,7 @@
 
         function buscarFormasPagamento() {
             // Buscar pagamentos confirmados
-            db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos")
+            db.collection("Eventos").doc("ComRoca2025").collection("pagamentos")
                 .where("status", "==", "confirmado")
                 .get()
                 .then((querySnapshot) => {
@@ -572,7 +572,7 @@
             selectParticipante.html('<option value="">Selecione um participante</option>');
 
             // Buscar participantes com pagamento pendente
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                 .where("anoevento", "==", "2025")
                 .where("statusPagamento", "in", ["pendente", null])  // Apenas pendentes ou sem status
                 .orderBy("nome")
@@ -600,7 +600,7 @@
             tabelaPagamentos.html('');
 
             // Buscar pagamentos
-            db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos")
+            db.collection("Eventos").doc("ComRoca2025").collection("pagamentos")
                 .orderBy("dataPagamento", "desc")
                 .get()
                 .then((querySnapshot) => {
@@ -817,7 +817,7 @@
                 }
                 
                 // Atualizar o pagamento no Firestore
-                db.collection("Eventos").doc("EssenciaMR2025").collection("pagamentos").doc(pagamentoId)
+                db.collection("Eventos").doc("ComRoca2025").collection("pagamentos").doc(pagamentoId)
                     .update({
                         valor: valorPagamento,
                         formaPagamento: formaPagamento,
@@ -825,7 +825,7 @@
                     })
                     .then(() => {
                         // Atualizar o participante com as novas informações
-                        return db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+                        return db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                             .update({
                                 formaPagamento: formaPagamento,
                                 valorPago: valorPagamento

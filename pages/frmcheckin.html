@@ -632,7 +632,7 @@
             }
             
             // Buscar acampantes com status "pago" no Firestore e que não fizeram check-in
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                 .where("statusPagamento", "==", "pago")
                 .where("anoevento", "==", "2025")
                 .orderBy("nome")
@@ -685,7 +685,7 @@
             const nomeAcampante = this.value;
             if (nomeAcampante) {
                 // Buscar dados do acampante selecionado
-                db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                     .where("nome", "==", nomeAcampante)
                     .where("anoevento", "==", "2025")
                     .get()
@@ -836,12 +836,12 @@
             };
 
             // Salvar no Firestore
-            db.collection("Eventos").doc("EssenciaMR2025").collection("checkin").add(formData)
+            db.collection("Eventos").doc("ComRoca2025").collection("checkin").add(formData)
                 .then((docRef) => {
                     console.log("Check-in realizado com ID: ", docRef.id);
                     
                     // Atualizar status na coleção de inscrições
-                    db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+                    db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                         .where("nome", "==", formData.nome)
                         .where("anoevento", "==", "2025")
                         .get()

@@ -1403,7 +1403,7 @@
                 departamentos = {};
 
                 // Buscar tarefas do Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist")
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist")
                     .get()
                     .then((querySnapshot) => {
                         const hoje = new Date();
@@ -1573,7 +1573,7 @@
                 dataTable.clear();
 
                 // Buscar tarefas do Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist")
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist")
                     .get()
                     .then((querySnapshot) => {
                         let tarefas = [];
@@ -1663,7 +1663,7 @@
 
             // Função para marcar uma tarefa como concluída
             function marcarComoConcluida(id) {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").doc(id).update({
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist").doc(id).update({
                     status: "completed",
                     dataAtualizacao: new Date().toISOString()
                 })
@@ -1684,7 +1684,7 @@
 
             // Função para abrir modal de detalhes
             function abrirModalDetalhes(id) {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").doc(id)
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist").doc(id)
                     .get()
                     .then((doc) => {
                         if (doc.exists) {
@@ -1736,7 +1736,7 @@
 
             // Função para abrir modal de edição
             function abrirModalEdicao(id) {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").doc(id)
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist").doc(id)
                     .get()
                     .then((doc) => {
                         if (doc.exists) {
@@ -1797,7 +1797,7 @@
                 }
 
                 // Adicionar ao Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").add({
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist").add({
                     departamento: taskDepartment,
                     titulo: taskTitle,
                     descricao: taskDescription,
@@ -1842,7 +1842,7 @@
                 }
 
                 // Atualizar no Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").doc(taskId).update({
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist").doc(taskId).update({
                     departamento: taskDepartment,
                     titulo: taskTitle,
                     descricao: taskDescription,
@@ -1872,7 +1872,7 @@
             function excluirTarefa(id) {
                 const confirmar = confirm("Tem certeza que deseja excluir esta tarefa?");
                 if (confirmar) {
-                    db.collection("Acampamentos").doc("AcampBT2025").collection("checklist").doc(id).delete()
+                    db.collection("Eventos").doc("ComRoca2025").collection("checklist").doc(id).delete()
                         .then(() => {
                             console.log("Tarefa excluída com sucesso!");
 
@@ -2026,7 +2026,7 @@
                 };
 
                 // Buscar participantes do Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("inscricoes")
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                     .where("anoacamp", "==", "2025")
                     .get()
                     .then((querySnapshot) => {
@@ -2401,7 +2401,7 @@
                 });
 
                 // Recomendação sobre tarefas pendentes
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checklist")
+                db.collection("Eventos").doc("ComRoca2025").collection("checklist")
                     .where("status", "!=", "completed")
                     .get()
                     .then((querySnapshot) => {
@@ -2484,7 +2484,7 @@
 
             // Adicione esta função para exportar dados dos insights
             function exportarDadosInsights() {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("inscricoes")
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                     .where("anoacamp", "==", "2025")
                     .get()
                     .then((querySnapshot) => {
@@ -2623,7 +2623,7 @@
                 };
 
                 // Buscar transações do Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro")
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro")
                     .orderBy("data", "desc")
                     .get()
                     .then((querySnapshot) => {
@@ -2899,7 +2899,7 @@
 
             // Função para abrir modal de detalhes da transação
             function abrirModalDetalhesTransacao(id) {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro").doc(id)
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro").doc(id)
                     .get()
                     .then((doc) => {
                         if (doc.exists) {
@@ -2964,7 +2964,7 @@
 
             // Função para abrir modal de edição de transação
             function abrirModalEdicaoTransacao(id) {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro").doc(id)
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro").doc(id)
                     .get()
                     .then((doc) => {
                         if (doc.exists) {
@@ -2998,7 +2998,7 @@
             function excluirTransacao(id) {
                 const confirmar = confirm("Tem certeza que deseja excluir esta transação?");
                 if (confirmar) {
-                    db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro").doc(id).delete()
+                    db.collection("Eventos").doc("ComRoca2025").collection("financeiro").doc(id).delete()
                         .then(() => {
                             console.log("Transação excluída com sucesso!");
                             carregarTransacoes();
@@ -3046,7 +3046,7 @@
                 }
 
                 // Adicionar ao Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro").add({
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro").add({
                     tipo: transacaoTipo,
                     categoria: transacaoCategoria,
                     descricao: transacaoDescricao,
@@ -3092,7 +3092,7 @@
                 }
 
                 // Atualizar no Firestore
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro").doc(transacaoId).update({
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro").doc(transacaoId).update({
                     tipo: transacaoTipo,
                     categoria: transacaoCategoria,
                     descricao: transacaoDescricao,
@@ -3160,7 +3160,7 @@
 
             // Função para exportar dados financeiros
             document.getElementById('exportarFinanceiroBtn').addEventListener('click', function () {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro")
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro")
                     .orderBy("data", "desc")
                     .get()
                     .then((querySnapshot) => {
@@ -3249,7 +3249,7 @@
 
             // Carregar categorias no filtro
             function carregarCategoriasNoFiltro() {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("financeiro")
+                db.collection("Eventos").doc("ComRoca2025").collection("financeiro")
                     .get()
                     .then((querySnapshot) => {
                         const categorias = new Set();
@@ -3328,14 +3328,14 @@
                 checkinsPorCelula = {};
 
                 // Primeiro, buscar o total de inscritos
-                db.collection("Acampamentos").doc("AcampBT2025").collection("inscricoes")
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                     .where("anoacamp", "==", "2025")
                     .get()
                     .then((querySnapshot) => {
                         totalInscritos = querySnapshot.size;
 
                         // Agora, buscar os check-ins
-                        return db.collection("Acampamentos").doc("AcampBT2025").collection("checkins").get();
+                        return db.collection("Eventos").doc("ComRoca2025").collection("checkins").get();
                     })
                     .then((querySnapshot) => {
                         let checkins = [];
@@ -3503,7 +3503,7 @@
 
             // Função para exportar dados de check-in
             document.getElementById('exportarCheckinBtn').addEventListener('click', function () {
-                db.collection("Acampamentos").doc("AcampBT2025").collection("checkins")
+                db.collection("Eventos").doc("ComRoca2025").collection("checkins")
                     .get()
                     .then((querySnapshot) => {
                         const dados = [];

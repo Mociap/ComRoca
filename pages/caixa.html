@@ -820,7 +820,7 @@
 
         // Função para carregar o dashboard
         function carregarDashboard() {
-            db.collection("Eventos").doc("EssenciaMR2025").collection("caixa")
+            db.collection("Eventos").doc("ComRoca2025").collection("caixa")
                 .get()
                 .then((querySnapshot) => {
                     let totalTransacoes = querySnapshot.size;
@@ -932,7 +932,7 @@
 
         // Função para carregar transações
         function carregarTransacoes() {
-            db.collection("Eventos").doc("EssenciaMR2025").collection("caixa")
+            db.collection("Eventos").doc("ComRoca2025").collection("caixa")
                 .orderBy("data", "desc")
                 .get()
                 .then((querySnapshot) => {
@@ -1015,7 +1015,7 @@
             }
             
             // Adicionar transação ao Firestore
-            db.collection("Eventos").doc("EssenciaMR2025").collection("caixa").add({
+            db.collection("Eventos").doc("ComRoca2025").collection("caixa").add({
                 descricao: descricao,
                 data: data,
                 valor: valor,
@@ -1053,7 +1053,7 @@
         function excluirTransacao() {
             const id = $('#confirmarExclusao').data('id');
             
-            db.collection("Eventos").doc("EssenciaMR2025").collection("caixa").doc(id)
+            db.collection("Eventos").doc("ComRoca2025").collection("caixa").doc(id)
                 .delete()
                 .then(() => {
                     alert('Transação excluída com sucesso!');
@@ -1110,7 +1110,7 @@
             }
             
             // Atualizar transação no Firestore
-            db.collection("Eventos").doc("EssenciaMR2025").collection("caixa").doc(id)
+            db.collection("Eventos").doc("ComRoca2025").collection("caixa").doc(id)
                 .update({
                     descricao: descricao,
                     data: data,
@@ -1785,7 +1785,7 @@
                 }
                 
                 // Criar referência para novo documento
-                const novaRef = db.collection("Eventos").doc("EssenciaMR2025").collection("caixa").doc();
+                const novaRef = db.collection("Eventos").doc("ComRoca2025").collection("caixa").doc();
                 
                 // Adicionar ao batch
                 batch.set(novaRef, {

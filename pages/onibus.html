@@ -526,7 +526,7 @@
                 }
                 
                 // Atualizar o participante no Firestore
-                db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                     .update({
                         onibus: onibusNumero === 'sem' ? null : onibusNumero,
                         observacoesOnibus: observacoes,
@@ -599,7 +599,7 @@
 
         function carregarParticipantes() {
             // Buscar participantes com pagamento confirmado
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                 .where("anoevento", "==", "2025")
                 .where("statusPagamento", "==", "pago")
                 .get()
@@ -830,7 +830,7 @@
         function removerDoOnibus(participanteId) {
             if (confirm('Tem certeza que deseja remover este participante do ônibus?')) {
                 // Atualizar o participante no Firestore
-                db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+                db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                     .update({
                         onibus: null,
                         observacoesOnibus: null,
@@ -865,7 +865,7 @@
             
             // Iterar sobre todos os participantes
             todosParticipantes.forEach(participante => {
-                const ref = db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participante.id);
+                const ref = db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participante.id);
                 
                 // Adicionar operação ao lote
                 batch.update(ref, {
@@ -1067,7 +1067,7 @@
                 }
                 
                 // Adicionar operação ao lote
-                const ref = db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId);
+                const ref = db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId);
                 batch.update(ref, {
                     onibus: onibus,
                     observacoesOnibus: observacoes,
@@ -1171,7 +1171,7 @@
             }
             
             // Atualizar o participante no Firestore
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes").doc(participanteId)
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
                 .update({
                     onibus: onibusNumero.toString(),
                     dataAtualizacaoOnibus: new Date().toISOString()

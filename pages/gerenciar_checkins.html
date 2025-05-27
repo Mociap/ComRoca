@@ -416,7 +416,7 @@
 
         function carregarDashboard() {
             // Buscar todas as inscrições com status de pagamento "pago"
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                 .where("anoevento", "==", "2025")
                 .where("statusPagamento", "==", "pago")
                 .get()
@@ -452,7 +452,7 @@
 
         function buscarDatasCheckin() {
             // Buscar check-ins realizados
-            db.collection("Eventos").doc("EssenciaMR2025").collection("checkin")
+            db.collection("Eventos").doc("ComRoca2025").collection("checkin")
                 .get()
                 .then((querySnapshot) => {
                     const datasPorDia = {};
@@ -485,7 +485,7 @@
             tabelaCheckins.html('');
 
             // Buscar todos os acampantes
-            db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                 .where("anoevento", "==", "2025")
                 .orderBy("nome")
                 .get()
@@ -569,7 +569,7 @@
 
         function verDetalhes(nomeAcampante) {
             // Buscar detalhes do check-in
-            db.collection("Eventos").doc("EssenciaMR2025").collection("checkin")
+            db.collection("Eventos").doc("ComRoca2025").collection("checkin")
                 .where("nome", "==", nomeAcampante)
                 .limit(1)
                 .get()
@@ -709,7 +709,7 @@
 
         function exportarPDF(nomeAcampante) {
             // Buscar detalhes do check-in
-            db.collection("Eventos").doc("EssenciaMR2025").collection("checkin")
+            db.collection("Eventos").doc("ComRoca2025").collection("checkin")
                 .where("nome", "==", nomeAcampante)
                 .limit(1)
                 .get()
@@ -997,7 +997,7 @@
             $('#confirmarExclusaoBtn').prop('disabled', true);
             
             // 1. Buscar o documento de check-in para excluir
-            db.collection("Eventos").doc("EssenciaMR2025").collection("checkin")
+            db.collection("Eventos").doc("ComRoca2025").collection("checkin")
                 .where("nome", "==", nomeAcampante)
                 .get()
                 .then((querySnapshot) => {
@@ -1010,7 +1010,7 @@
                     });
             
                     // 2. Atualizar o status na coleção de inscrições
-                    const updatePromise = db.collection("Eventos").doc("EssenciaMR2025").collection("inscricoes")
+                    const updatePromise = db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
                         .where("nome", "==", nomeAcampante)
                         .where("anoevento", "==", "2025")
                         .get()
