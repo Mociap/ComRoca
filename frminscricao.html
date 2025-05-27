@@ -513,7 +513,7 @@
             const cpfResponsavelField = document.getElementById('cpfResponsavel');
             const signatureContainer = document.querySelector('.signature-container')?.parentElement;
 
-            if (age < 18) {
+            if (age < 0) {
                 // Mostrar campos e torná-los obrigatórios para menores de 18
                 responsavelDiv.style.display = 'block';
                 autorizacaoDiv.style.display = 'block';
