@@ -424,18 +424,34 @@
                             status: 'confirmado'
                         });
                     })
-                    .then((docRef) => {
-                        console.log("Pagamento registrado com sucesso, ID:", docRef.id);
-                        alert('Pagamento registrado com sucesso!');
-                        $('#paymentForm')[0].reset();
+                                        .then((docRef) => {
+                                            console.log("Pagamento registrado com sucesso, ID:", docRef.id);
+                        
+                                            // ADICIONAR: Registrar automaticamente no caixa
+                                            return db.collection("Eventos").doc("ComRoca2025").collection("caixa").add({
+                                                descricao: `Inscrição - ${$('#participante option:selected').text()}`,
+                                                data: new Date().toISOString().substring(0, 10),
+                                                valor: valorPagamento,
+                                                tipo: 'entrada',
+                                                categoria: 'inscricao',
+                                                metodo: formaPagamento,
+                                                observacao: `Pagamento de inscrição - Ref: ${docRef.id}`,
+                                                referenciaOrigem: 'pagamento',
+                                                pagamentoId: docRef.id,
+                                                participanteId: participanteId,
+                                                dataCriacao: new Date().toISOString()
+                                            });
+                                        })
+                                        .then(() => {
+                                            alert('Pagamento registrado com sucesso!');
+                                            $('#paymentForm')[0].reset();
 
-                        // Recarregar dados
-                        console.log("Recarregando dados do dashboard após registro de pagamento...");
-                        carregarDashboard();
-                        carregarParticipantesPendentes();
-                        carregarUltimosPagamentos();
-                    })
-                    .catch((error) => {
+                                            // Recarregar dados
+                                            console.log("Recarregando dados do dashboard após registro de pagamento...");
+                                            carregarDashboard();
+                                            carregarParticipantesPendentes();
+                                            carregarUltimosPagamentos();
+                                        })                    .catch((error) => {
                         console.error("Erro ao registrar pagamento:", error);
                         alert("Erro ao registrar pagamento. Tente novamente.");
                     });
@@ -443,39 +459,99 @@
 
             // Confirmar estorno de pagamento
             $('#confirmarEstorno').on('click', function () {
-                const pagamentoId = $(this).data('pagamento');
-                const participanteId = $(this).data('participante');
+    const pagamentoId = $(this).data('pagamento');
+    const participanteId = $(this).data('participante');
 
-                // Atualizar status do pagamento
-                db.collection("Eventos").doc("ComRoca2025").collection("pagamentos").doc(pagamentoId)
-                    .update({
-                        status: 'estornado',
-                        dataEstorno: new Date().toISOString()
-                    })
-                    .then(() => {
-                        // Atualizar status do participante
-                        return db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
-                            .update({
-                                statusPagamento: 'pendente',
-                                dataPagamento: null,
-                                formaPagamento: null,
-                                valorPago: null
-                            });
-                    })
-                    .then(() => {
-                        alert('Pagamento estornado com sucesso!');
-                        $('#estornoModal').modal('hide');
+    console.log("Iniciando estorno do pagamento:", pagamentoId);
 
-                        // Recarregar dados
-                        carregarDashboard();
-                        carregarParticipantesPendentes();
-                        carregarUltimosPagamentos();
-                    })
-                    .catch((error) => {
-                        console.error("Erro ao estornar pagamento: ", error);
-                        alert("Erro ao estornar pagamento. Tente novamente.");
+    // Atualizar status do pagamento
+    db.collection("Eventos").doc("ComRoca2025").collection("pagamentos").doc(pagamentoId)
+        .update({
+            status: 'estornado',
+            dataEstorno: new Date().toISOString()
+        })
+        .then(() => {
+            console.log("Status do pagamento atualizado para 'estornado'");
+            
+            // Atualizar status do participante
+            return db.collection("Eventos").doc("ComRoca2025").collection("inscricoes").doc(participanteId)
+                .update({
+                    statusPagamento: 'pendente',
+                    dataPagamento: null,
+                    formaPagamento: null,
+                    valorPago: null
+                });
+        })
+        .then(() => {
+            console.log("Status do participante atualizado para 'pendente'");
+            console.log("Buscando entrada correspondente no caixa...");
+            
+            // Buscar e tratar entrada correspondente no caixa
+            return db.collection("Eventos").doc("ComRoca2025").collection("caixa")
+                .where("pagamentoId", "==", pagamentoId)
+                .where("referenciaOrigem", "==", "pagamento")
+                .get();
+        })
+        .then((caixaSnapshot) => {
+            if (!caixaSnapshot.empty) {
+                console.log(`Encontradas ${caixaSnapshot.size} entrada(s) no caixa para estornar`);
+                
+                const batch = db.batch();
+                
+                caixaSnapshot.forEach((doc) => {
+                    const transacaoCaixa = doc.data();
+                    
+                    // Opção 1: Criar transação de estorno (RECOMENDADO para auditoria)
+                    const novaRefEstorno = db.collection("Eventos").doc("ComRoca2025").collection("caixa").doc();
+                    
+                    batch.set(novaRefEstorno, {
+                        descricao: `ESTORNO - ${transacaoCaixa.descricao}`,
+                        data: new Date().toISOString().substring(0, 10),
+                        valor: transacaoCaixa.valor,
+                        tipo: 'saida', // Estorno é uma saída
+                        categoria: transacaoCaixa.categoria,
+                        metodo: transacaoCaixa.metodo,
+                        observacao: `Estorno do pagamento - Ref Original: ${pagamentoId}`,
+                        referenciaOrigem: 'estorno_pagamento',
+                        pagamentoId: pagamentoId,
+                        participanteId: participanteId,
+                        transacaoOriginalId: doc.id, // Referência à transação original
+                        dataCriacao: new Date().toISOString()
                     });
-            });
+                    
+                    // Opção 2: Marcar transação original como estornada (para histórico)
+                    batch.update(doc.ref, {
+                        status: 'estornado',
+                        dataEstorno: new Date().toISOString(),
+                        observacao: (transacaoCaixa.observacao || '') + ' [ESTORNADO]'
+                    });
+                    
+                    // Opção 3: Se preferir deletar completamente (NÃO RECOMENDADO)
+                    // batch.delete(doc.ref);
+                });
+                
+                return batch.commit();
+            } else {
+                console.log("Nenhuma entrada encontrada no caixa para este pagamento");
+                return Promise.resolve(); // Continua o fluxo mesmo sem encontrar
+            }
+        })
+        .then(() => {
+            console.log("Estorno processado com sucesso em todas as coleções");
+            alert('Pagamento estornado com sucesso!\nO estorno foi registrado no controle de caixa.');
+            $('#estornoModal').modal('hide');
+
+            // Recarregar dados
+            carregarDashboard();
+            carregarParticipantesPendentes();
+            carregarUltimosPagamentos();
+        })
+        .catch((error) => {
+            console.error("Erro ao estornar pagamento: ", error);
+            alert("Erro ao estornar pagamento. Tente novamente.");
+        });
+});
+
         });
 
         function carregarDashboard() {

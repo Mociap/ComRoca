@@ -742,6 +742,66 @@
             });
         });
 
+function sincronizarPagamentos() {
+    // Buscar pagamentos confirmados que não estão no caixa
+    db.collection("Eventos").doc("ComRoca2025").collection("pagamentos")
+        .where("status", "==", "confirmado")
+        .get()
+        .then((pagamentosSnapshot) => {
+            const batch = db.batch();
+            let contador = 0;
+            
+            pagamentosSnapshot.forEach((doc) => {
+                const pagamento = doc.data();
+                
+                // Verificar se já existe no caixa
+                db.collection("Eventos").doc("ComRoca2025").collection("caixa")
+                    .where("pagamentoId", "==", doc.id)
+                    .get()
+                    .then((caixaSnapshot) => {
+                        if (caixaSnapshot.empty) {
+                            // Não existe no caixa, criar entrada
+                            const novaRef = db.collection("Eventos").doc("ComRoca2025").collection("caixa").doc();
+                            
+                            batch.set(novaRef, {
+                                descricao: `Inscrição - ${pagamento.participanteNome}`,
+                                data: pagamento.dataPagamento.substring(0, 10),
+                                valor: pagamento.valor,
+                                tipo: 'entrada',
+                                categoria: 'inscricao',
+                                metodo: pagamento.formaPagamento,
+                                observacao: `Pagamento de inscrição - Ref: ${doc.id}`,
+                                referenciaOrigem: 'pagamento',
+                                pagamentoId: doc.id,
+                                participanteId: pagamento.participanteId,
+                                dataCriacao: new Date().toISOString()
+                            });
+                            
+                            contador++;
+                        }
+                    });
+            });
+            
+            // Executar batch se houver novos registros
+            if (contador > 0) {
+                return batch.commit();
+            }
+        })
+        .then(() => {
+            if (contador > 0) {
+                console.log(`${contador} pagamentos sincronizados com o caixa`);
+                carregarDashboard();
+                carregarTransacoes();
+            }
+        });
+}
+
+// Chamar na inicialização
+$(document).ready(function () {
+    // ... código existente ...
+    sincronizarPagamentos(); // ADICIONAR ESTA LINHA
+});
+
         // Função para inicializar os gráficos
         function initGraficos() {
             // Gráfico de Fluxo de Caixa
