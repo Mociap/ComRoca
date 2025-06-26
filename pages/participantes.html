@@ -354,7 +354,7 @@
             text: 'Exportar Excel',
             className: 'btn btn-export d-none',
             exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                columns: [0, 1, 2, 3, 4, 5]
             }
         },
     ]
@@ -362,7 +362,18 @@
 
             // Associar botões personalizados aos botões do DataTable
             $('.btn-export').eq(0).on('click', function () {
+                const btn = $(this);
+                const originalText = btn.html();
+                
+                btn.html('<i class="material-icons align-middle">hourglass_empty</i> Exportando...');
+                btn.prop('disabled', true);
+                
                 dataTable.button(0).trigger();
+                
+                setTimeout(() => {
+                    btn.html(originalText);
+                    btn.prop('disabled', false);
+                }, 2000);
             });
 
             $('.btn-export').eq(1).on('click', function () {
