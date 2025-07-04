@@ -806,6 +806,15 @@
                     .then((docRef) => {
                         console.log("Documento escrito com ID: ", docRef.id);
 
+                        // ✅ ADICIONE ESTA PARTE - Incrementar contador
+                        return db.collection("Eventos").doc("ComRoca2025").doc("contador").update({
+                            totalInscricoes: firebase.firestore.FieldValue.increment(1),
+                            ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    })
+                    .then(() => {
+                        console.log("Contador atualizado!");
+                        
                         // Send email notification
                         const emailData = {
                             to: "mozer.cielle@gmail.com",

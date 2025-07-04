@@ -246,73 +246,64 @@
     </div>
 
     <script>
-        // Função para verificar limite de inscrições
+        // ✅ SOLUÇÃO: Ler apenas 1 documento contador
         function verificarLimiteInscricoes() {
-            // Verificar se o Firebase foi inicializado
             if (typeof db === 'undefined') {
                 console.error('Firebase não foi inicializado corretamente');
                 return;
             }
 
-            // Mostrar loading
             const loadingSpinner = document.getElementById('loadingSpinner');
             loadingSpinner.style.display = 'block';
 
-            db.collection("Eventos").doc("ComRoca2025").collection("inscricoes")
-                .where("anoevento", "==", "2025")
-                .get()
-                .then((querySnapshot) => {
-                    const totalInscricoes = querySnapshot.size;
-                    console.log(`Total de inscrições ComRoca: ${totalInscricoes}`);
+            // ✅ LER APENAS 1 DOCUMENTO = 1 LEITURA
+            db.collection("Eventos").doc("ComRoca2025")  // Acesse diretamente o documento ComRoca2025
+    .get()  // Aqui você já faz a leitura do documento
+    .then((doc) => {
+        if (doc.exists) {
+            const totalInscricoes = doc.data().contador.totalInscricoes || 0;  // Acesse o campo dentro do documento
+            console.log(`Total de inscrições ComRoca: ${totalInscricoes}`);
 
-                    const btnInscricao = document.getElementById('btnInscricao');
-                    const alertaEsgotado = document.getElementById('alertaEsgotado');
+            const btnInscricao = document.getElementById('btnInscricao');
+            const alertaEsgotado = document.getElementById('alertaEsgotado');
 
-                    // Ocultar loading e mostrar o botão
-                    loadingSpinner.style.display = 'none';
-                    btnInscricao.classList.remove('btn-hidden');
+            loadingSpinner.style.display = 'none';
+            btnInscricao.classList.remove('btn-hidden');
 
-                    if (totalInscricoes >= 185) {
-                        // Desabilitar o botão
-                        btnInscricao.classList.add('btn-esgotado');
-                        btnInscricao.classList.remove('btn-gradient');
-                        btnInscricao.textContent = 'Inscrições Encerradas';
-                        btnInscricao.href = '#';
-                        btnInscricao.onclick = function (e) {
-                            e.preventDefault();
-                            alert('Desculpe, as inscrições foram encerradas. Limite de vagas atingido.');
-                            return false;
-                        };
+            if (totalInscricoes >= 185) {
+                // Desabilitar o botão
+                btnInscricao.classList.add('btn-esgotado');
+                btnInscricao.classList.remove('btn-gradient');
+                btnInscricao.textContent = 'Inscrições Encerradas';
+                btnInscricao.href = '#';
+                btnInscricao.onclick = function (e) {
+                    e.preventDefault();
+                    alert('Desculpe, as inscrições foram encerradas. Limite de vagas atingido.');
+                    return false;
+                };
+                alertaEsgotado.style.display = 'block';
+            } else {
+                // Manter o botão habilitado
+                btnInscricao.classList.remove('btn-esgotado');
+                btnInscricao.classList.add('btn-gradient');
+                btnInscricao.textContent = 'Inscreva-se Agora';
+                btnInscricao.href = 'frminscricao.html';
+                btnInscricao.onclick = null;
+                alertaEsgotado.style.display = 'none';
+            }
+        } else {
+            console.log("Documento ComRoca2025 não existe");
+            // Fallback: assumir 0 inscrições
+            handleButtonState(0);
+        }
+    })
+    .catch((error) => {
+        console.error("Erro ao verificar contador:", error);
+        // Em caso de erro, mostrar o botão funcionando
+        handleErrorState();
+    });
 
-                        // Mostrar alerta
-                        alertaEsgotado.style.display = 'block';
 
-                    } else {
-                        // Manter o botão habilitado
-                        btnInscricao.classList.remove('btn-esgotado');
-                        btnInscricao.classList.add('btn-gradient');
-                        btnInscricao.textContent = 'Inscreva-se Agora';
-                        btnInscricao.href = 'frminscricao.html';
-                        btnInscricao.onclick = null;
-
-                        // Ocultar alerta
-                        alertaEsgotado.style.display = 'none';
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erro ao verificar limite de inscrições:", error);
-                    // Em caso de erro, ocultar loading e mostrar o botão funcionando
-                    const btnInscricao = document.getElementById('btnInscricao');
-                    const alertaEsgotado = document.getElementById('alertaEsgotado');
-
-                    loadingSpinner.style.display = 'none';
-                    btnInscricao.classList.remove('btn-hidden', 'btn-esgotado');
-                    btnInscricao.classList.add('btn-gradient');
-                    btnInscricao.textContent = 'Inscreva-se Agora';
-                    btnInscricao.href = 'frminscricao.html';
-                    btnInscricao.onclick = null;
-                    alertaEsgotado.style.display = 'none';
-                });
         }
 
         // Verificar limite quando a página carregar
