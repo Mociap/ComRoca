@@ -509,65 +509,79 @@
             // Limpar opções anteriores e adicionar a opção padrão
             selectCelula.innerHTML = '<option value="">Selecione seu Líder de Célula</option>';
 
-            // Buscar líderes de ambos os supervisores
-            const supervisores = [
-                "GUTEMBERG / ELAINE",
-                "FERNANDES / ZELÂNDIA",
-                "VANDERLEI / ADEILDES",
-                "GUSTAVO / MARIANA",
+            // Lista estática de líderes de células
+            const lideres = [
+                "ADRIANA / KENEDY",
+                "AIRTON / EMÍLIA",
+                "ALDA",
+                "ALLAN / AILDA",
+                "ANA / JOYCE / AMANDA",
+                "ANDERSON / LAURISA",
+                "ANDREIA / VANDERLEI",
+                "ARTHUR / LORENA",
                 "BELMIRO / MÔNICA",
-                "SAMUEL / RAISSA",
-                "MOZER / MARCIELLE",
-                "AUGUSTO / IVETE",
+                "BERNADETE / FRANCY",
+                "CAIO / BIANCA",
+                "CLÁUDIO / JAQUELINE",
+                "CLOVILDA / JOSIMARC",
+                "CLOVIS / ANDREI",
+                "DANIEL / EVELLY",
+                "EDUARDO / NICOLLY",
+                "FÁBIO / EDNALVA",
+                "FABRÍCIO / NADJA",
+                "FERNANDES / ZELÂNDIA",
+                "GABRIEL / BARBARA",
                 "GABRIEL / RAYZA",
+                "GILBERTO / MARCIA",
+                "GUILHERME / MIGUEL",
+                "GUSTAVO / MARIANA",
+                "GUTEMBERG / ELAINE",
+                "JAIRO / ROSANA",
+                "JOHN",
+                "JONATHAN / ALINE",
+                "JOSINALDO / ELAINE",
+                "JÚNIOR / FERNANDA",
+                "LEONARDO / LIDIA",
+                "LINDEMBERG / ADRIANA / LUCIENE",
+                "LÍVIA / NICOLY",
+                "LUCAS / SAYMON",
+                "MANOEL / CLAUDIANE",
+                "MARCIELLE / PIETRA",
+                "NATIVA",
+                "PATRÍCIA",
+                "PEDRO / FILIPE",
+                "RAMON / NAZELI",
+                "RAQUEL",
+                "RAQUEL / ADEILDES",
+                "REBEKAH / MONIQUE",
+                "RHODNEY / KAREN",
+                "RIBAMAR / JOSELMA",
                 "RICARDO / ROSANE",
-                "ELIANE",
-                "GILBERTO / MARCIA"
+                "ROGÉRIO / LUCIÉLLEN",
+                "RUBENS / EMILLY",
+                "SAMUEL / RAISSA",
+                "SAULO / ERIKA",
+                "SIMONE",
+                "WALTER / JESSY",
+                "KAYANN / NATÁLIA"
             ];
 
-            // Criar um array para armazenar todas as promessas de consulta
-            const promises = supervisores.map(supervisor => {
-                return db2.collection("estruturacelula")
-                    .where("supervisor", "==", supervisor)
-                    .get();
+            // Ordenar os líderes alfabeticamente
+            lideres.sort((a, b) => a.localeCompare(b));
+
+            // Adicionar os líderes ordenados ao dropdown
+            lideres.forEach(lider => {
+                const option = document.createElement('option');
+                option.value = lider;
+                option.textContent = lider;
+                selectCelula.appendChild(option);
             });
 
-            // Executar todas as consultas e processar os resultados
-            Promise.all(promises)
-                .then((snapshots) => {
-                    // Array para armazenar todos os líderes
-                    const lideres = [];
-
-                    // Coletar todos os líderes de todas as consultas
-                    snapshots.forEach(querySnapshot => {
-                        querySnapshot.forEach((doc) => {
-                            lideres.push({
-                                value: doc.data().conclider,
-                                text: doc.data().conclider
-                            });
-                        });
-                    });
-
-                    // Ordenar os líderes alfabeticamente
-                    lideres.sort((a, b) => a.text.localeCompare(b.text));
-
-                    // Adicionar os líderes ordenados ao dropdown
-                    lideres.forEach(lider => {
-                        const option = document.createElement('option');
-                        option.value = lider.value;
-                        option.textContent = lider.text;
-                        selectCelula.appendChild(option);
-                    });
-
-                    // Adicionar "Outras Células" como última opção
-                    const outrasCelulasOption = document.createElement('option');
-                    outrasCelulasOption.value = "Outras Células";
-                    outrasCelulasOption.textContent = "Outras Células";
-                    selectCelula.appendChild(outrasCelulasOption);
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar líderes:", error);
-                });
+            // Adicionar "Outras Células" como última opção
+            const outrasCelulasOption = document.createElement('option');
+            outrasCelulasOption.value = "Outras Células";
+            outrasCelulasOption.textContent = "Outras Células";
+            selectCelula.appendChild(outrasCelulasOption);
         }
 
 
@@ -575,17 +589,12 @@
             const liderSelecionado = this.value;
             const infoRedeDiv = document.getElementById('infoRedeDiv');
 
-            if (liderSelecionado) {
-                db2.collection("estruturacelula")
-                    .where("conclider", "==", liderSelecionado)
-                    .get()
-                    .then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                            document.getElementById('supervisor').value = doc.data().supervisor;
-                            document.getElementById('rede').value = doc.data().rede;
-                            infoRedeDiv.style.display = 'flex';
-                        });
-                    });
+            if (liderSelecionado && liderSelecionado !== "Outras Células") {
+                // Como não temos mais as informações de supervisor e rede no Firebase,
+                // vamos ocultar esses campos ou deixá-los vazios
+                document.getElementById('supervisor').value = '';
+                document.getElementById('rede').value = '';
+                infoRedeDiv.style.display = 'none';
             } else {
                 document.getElementById('supervisor').value = '';
                 document.getElementById('rede').value = '';
@@ -696,7 +705,7 @@
             const nome = document.getElementById('nome').value.trim().toUpperCase();
             verificarNomeExistente(nome).then(existe => {
                 if (existe) {
-                    alert('Este nome já está cadastrado para o ACAMP. Não é possível prosseguir com o cadastro.');
+                    alert('Este nome já está cadastrado. Não é possível prosseguir com o cadastro.');
                     return;
                 }
 
@@ -741,7 +750,7 @@
                         console.log("Documento escrito com ID: ", docRef.id);
 
                         // ✅ ADICIONE ESTA PARTE - Incrementar contador
-                        return db.collection("Eventos").doc("ComRoca2025").doc("contador").update({
+                        return db.collection("Eventos").doc("ComRoca2025").update({
                             totalInscricoes: firebase.firestore.FieldValue.increment(1),
                             ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
                         });

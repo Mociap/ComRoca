@@ -54,6 +54,28 @@
             margin-right: auto;
         }
 
+        .btn-nova-inscricao {
+            background: linear-gradient(45deg, #6108a1, #9900CC);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 25px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-nova-inscricao:hover {
+            background: linear-gradient(45deg, #200020, #9900CC);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         @media screen and (max-width: 768px) {
             .mobile-image {
                 display: block;
@@ -61,6 +83,11 @@
 
             .desktop-image {
                 display: none;
+            }
+
+            .btn-nova-inscricao {
+                padding: 10px 25px;
+                font-size: 14px;
             }
         }
     </style>
@@ -73,9 +100,20 @@
         <p>Entre em contato com Samuel (Coordenador) para que você possa finalizar o processo</p>
         <p style="margin-top: -15px;"><b>Whatsapp: </b><a href="https://wa.me/558391173924" target="_blank">83
                     99117-3924</a></p>
+        
+        <!-- Botão para fazer nova inscrição -->
+        <div style="margin: 30px 0;">
+            <a href="frminscricao.html" class="btn-nova-inscricao">
+                <i class="fas fa-plus-circle" style="margin-right: 8px;"></i>
+                Fazer Nova Inscrição
+            </a>
+        </div>
+        
         <img src="./assets/Texto.png" alt="Texto" class="img-fluid mb-4 desktop-image">
         <img src="./assets/Texto Celular.png" alt="Texto" class="img-fluid mb-4 mobile-image">
     </div>
+
+    <!-- Font Awesome para o ícone -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
-
